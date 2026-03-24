@@ -27,6 +27,10 @@ class ProviderSpeechRequest(BaseModel):
     response_format: Literal["wav"] = "wav"
     language: str = "English"
     instructions: str | None = None
+    prompt_audio_path: str | None = None
+    prompt_audio_b64: str | None = None
+    prompt_text: str | None = None
+    speaking_rate: float | None = None
     metadata: dict[str, Any] = Field(default_factory=dict)
 
 
@@ -46,6 +50,11 @@ class ProviderStreamStartRequest(BaseModel):
     sample_rate: int = 24000
     format: Literal["wav"] = "wav"
     context_mode: str = "conversation"
+    prompt_audio_path: str | None = None
+    prompt_audio_b64: str | None = None
+    prompt_text: str | None = None
+    instructions: str | None = None
+    speaking_rate: float | None = None
     metadata: dict[str, Any] = Field(default_factory=dict)
 
 

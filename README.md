@@ -41,6 +41,16 @@ The answer must come from runtime truth:
 
 The main repo stays clean until one runner clearly wins.
 
+## Runtime split
+
+Upstream runtime truth matters here:
+
+- original `Voxtream` uses the older `voxtream==0.1.5` line and requires `prompt_text`
+- `Voxtream2` uses the newer `voxtream>=0.2` line and supports dynamic speaking-rate control
+- both lines use the same package name but expose different APIs
+
+So this repo treats them as separate container lanes, not one shared Python runtime.
+
 ## Provider boundary
 
 This repo is meant to expose a modular Voxtream provider container surface:
@@ -58,9 +68,9 @@ From the repo root:
 
 - `cp .env.example .env`
 - `./scripts/run_doctor.sh`
-- `docker compose build`
-- `docker compose up -d`
-- `curl http://127.0.0.1:8074/health`
+- `docker compose build voxtream2-provider`
+- `docker compose up -d voxtream2-provider`
+- `curl http://127.0.0.1:8075/health`
 
 ## Current status
 
@@ -69,10 +79,12 @@ This repo is scaffolded first.
 Current implemented surfaces:
 
 - config loading
+- split container plan for `voxtream` and `voxtream2`
 - provider models and request schemas
 - event logging
 - first-run dependency doctor
 - health and model discovery endpoints
+- native `Voxtream2` local-snapshot loading path
 - stream contract shape
 
 Current non-goals:

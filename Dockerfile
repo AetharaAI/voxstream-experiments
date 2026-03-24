@@ -1,5 +1,7 @@
 FROM nvidia/cuda:12.8.1-cudnn-runtime-ubuntu22.04
 
+ARG VOXTREAM_PACKAGE_SPEC="voxtream>=0.2,<0.3"
+
 ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
@@ -18,6 +20,7 @@ RUN apt-get update \
 WORKDIR /app
 COPY . /app
 
-RUN uv sync --python /usr/bin/python3.12 --extra native
+RUN uv sync --python /usr/bin/python3.12 \
+    && uv pip install --python /usr/bin/python3.12 "${VOXTREAM_PACKAGE_SPEC}"
 
 CMD ["uv", "run", "--python", "/usr/bin/python3.12", "python", "-m", "voxtream_experiments.provider_server"]

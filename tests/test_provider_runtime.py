@@ -18,4 +18,6 @@ def test_health_payload_stays_staged_without_native_runtime(tmp_path: Path, monk
 
     assert payload["status"] == "staged"
     assert payload["dependencies"]["native_ready"] is False
-    assert len(payload["dependencies"]["models"]) == 2
+    assert payload["dependencies"]["provider_family"] == "voxtream2"
+    assert payload["dependencies"]["native_runtime_implemented"] is True
+    assert len(payload["dependencies"]["models"]) == 1

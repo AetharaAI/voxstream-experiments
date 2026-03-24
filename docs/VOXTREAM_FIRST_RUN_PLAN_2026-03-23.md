@@ -28,13 +28,24 @@ Model snapshots currently live at:
    - `espeak-ng`
    - Python `3.12`
    - CUDA-visible GPU
-6. Build the provider container:
-   - `docker compose build`
-7. Start the provider:
-   - `docker compose up -d`
-8. Inspect health:
-   - `curl http://127.0.0.1:8074/health`
-9. If health reports dependency failures, fix them before touching the production stack.
+6. Pick the runtime lane you are actually testing first:
+   - `voxtream2-provider` for `voxtream>=0.2`
+   - `voxtream-provider` for original `voxtream==0.1.5`
+7. Build the provider container:
+   - `docker compose build voxtream2-provider`
+8. Start the provider:
+   - `docker compose up -d voxtream2-provider`
+9. Inspect health:
+   - `curl http://127.0.0.1:8075/health`
+10. If health reports dependency failures, fix them before touching the production stack.
+
+## Runtime truth
+
+The upstream codebase currently forces a split:
+
+- original `Voxtream` and `Voxtream2` ship under the same package name
+- they do not share the same Python API
+- they should not be treated as one interchangeable in-process model family
 
 ## Proof targets
 

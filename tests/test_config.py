@@ -12,6 +12,6 @@ def test_config_model_descriptors_include_both_lanes(tmp_path: Path, monkeypatch
 
     descriptors = config.model_descriptors()
 
-    assert len(descriptors) == 2
-    assert descriptors[0]["alias"] == "voxtream_realtime"
-    assert descriptors[1]["alias"] == "voxtream2_realtime"
+    assert config.provider_family == "voxtream2"
+    assert len(descriptors) == 1
+    assert descriptors[0]["alias"] == "voxtream2_realtime"

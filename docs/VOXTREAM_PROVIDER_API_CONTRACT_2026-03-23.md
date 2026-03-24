@@ -14,15 +14,16 @@ The production stack talks to it over HTTP instead of embedding runner logic dir
 
 Intended experiment lanes:
 
-- `voxtream_realtime`
-- `voxtream2_realtime`
+- `voxtream_realtime` via a dedicated `voxtream==0.1.5` container
+- `voxtream2_realtime` via a dedicated `voxtream>=0.2` container
 
 Current implementation state:
 
 - health: implemented
 - model discovery: implemented
 - stream endpoint shapes: implemented
-- native inference: not yet proven
+- native `Voxtream2` loading path: implemented
+- original `Voxtream` native runner: not yet implemented in this provider code
 
 ## Endpoints
 
@@ -36,10 +37,7 @@ This route should return `200` only when the provider can actually attempt nativ
 
 Returns available provider models.
 
-Current result includes:
-
-- `voxtream_realtime`
-- `voxtream2_realtime`
+Current result includes the single model lane served by that container instance.
 
 ### `GET /v1/voices`
 
@@ -71,18 +69,21 @@ Expected payload shape:
   "sample_rate": 24000,
   "format": "wav",
   "context_mode": "conversation",
+  "prompt_audio_path": "/abs/path/to/reference.wav",
+  "prompt_text": "Required for original Voxtream lane.",
+  "speaking_rate": 2.0,
   "metadata": {
     "extra": {
-      "reference_audio_path": "/abs/path/to/reference.wav",
-      "reference_text": "Optional prompt text for original Voxtream.",
-      "generation_prompt": "Optional instruction prompt.",
-      "realtime_profile": {
-        "speaking_rate": 2.0
-      }
+      "reference_audio_path": "/abs/path/to/reference.wav"
     }
   }
 }
 ```
+
+Notes:
+
+- `prompt_text` is required by the original `Voxtream` runtime line.
+- `speaking_rate` applies to `Voxtream2`.
 
 ### `POST /v1/stream/{session_id}/text`
 

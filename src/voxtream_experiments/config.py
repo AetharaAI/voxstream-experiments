@@ -4,6 +4,7 @@ import os
 import shutil
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Literal
 
 from dotenv import load_dotenv
 
@@ -17,18 +18,18 @@ class ExperimentConfig:
     provider_default_response_format: str
     provider_enable_native_runtime: bool
     provider_network_name: str
+    provider_family: Literal["voxtream", "voxtream2"]
     model_alias: str
     model_id: str
     model_path: str
-    model2_alias: str
-    model2_id: str
-    model2_path: str
     device: str
     dtype: str
     output_dir: Path
     log_dir: Path
     default_sample_rate: int
     default_voice: str
+    generator_config_path: Path
+    speaking_rate_config_path: Path
 
     @classmethod
     def from_env(cls, env_file: str | None = None) -> "ExperimentConfig":
@@ -50,25 +51,22 @@ class ExperimentConfig:
             provider_default_response_format=os.getenv("VOXTREAM_PROVIDER_DEFAULT_RESPONSE_FORMAT", "wav"),
             provider_enable_native_runtime=os.getenv("VOXTREAM_PROVIDER_ENABLE_NATIVE_RUNTIME", "false").lower() in {"1", "true", "yes", "on"},
             provider_network_name=os.getenv("VOXTREAM_PROVIDER_NETWORK_NAME", "aether-voice-mesh"),
-            model_alias=os.getenv("VOXTREAM_MODEL_ALIAS", "voxtream_realtime"),
-            model_id=os.getenv("VOXTREAM_MODEL_ID", "herimor/voxtream"),
-            model_path=os.getenv("VOXTREAM_MODEL_PATH", "/mnt/aetherpro/models/voice/herimor/voxtream"),
-            model2_alias=os.getenv("VOXTREAM2_MODEL_ALIAS", "voxtream2_realtime"),
-            model2_id=os.getenv("VOXTREAM2_MODEL_ID", "herimor/voxtream2"),
-            model2_path=os.getenv("VOXTREAM2_MODEL_PATH", "/mnt/aetherpro/models/voice/herimor/voxtream2"),
+            provider_family=os.getenv("VOXTREAM_PROVIDER_FAMILY", "voxtream2"),
+            model_alias=os.getenv("VOXTREAM_MODEL_ALIAS", "voxtream2_realtime"),
+            model_id=os.getenv("VOXTREAM_MODEL_ID", "herimor/voxtream2"),
+            model_path=os.getenv("VOXTREAM_MODEL_PATH", "/mnt/aetherpro/models/voice/herimor/voxtream2"),
             device=os.getenv("VOXTREAM_DEVICE", "cuda:0"),
             dtype=os.getenv("VOXTREAM_DTYPE", "float16"),
             output_dir=output_dir,
             log_dir=log_dir,
             default_sample_rate=int(os.getenv("VOXTREAM_DEFAULT_SAMPLE_RATE", "24000")),
             default_voice=os.getenv("VOXTREAM_DEFAULT_VOICE", "reference_audio_required"),
+            generator_config_path=Path(os.getenv("VOXTREAM_GENERATOR_CONFIG_PATH", "configs/voxtream2.generator.json")),
+            speaking_rate_config_path=Path(os.getenv("VOXTREAM_SPEAKING_RATE_CONFIG_PATH", "configs/voxtream2.speaking_rate.json")),
         )
 
     def model_descriptors(self) -> list[dict[str, str]]:
-        return [
-            {"alias": self.model_alias, "id": self.model_id, "path": self.model_path},
-            {"alias": self.model2_alias, "id": self.model2_id, "path": self.model2_path},
-        ]
+        return [{"alias": self.model_alias, "id": self.model_id, "path": self.model_path}]
 
     def espeak_available(self) -> bool:
         return shutil.which("espeak-ng") is not None
