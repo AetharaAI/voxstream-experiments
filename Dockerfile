@@ -21,6 +21,6 @@ WORKDIR /app
 COPY . /app
 
 RUN uv sync --python /usr/bin/python3.12 \
-    && uv pip install --python /usr/bin/python3.12 "${VOXTREAM_PACKAGE_SPEC}"
+    && uv pip install --python /app/.venv/bin/python "${VOXTREAM_PACKAGE_SPEC}"
 
-CMD ["uv", "run", "--python", "/usr/bin/python3.12", "python", "-m", "voxtream_experiments.provider_server"]
+CMD ["/app/.venv/bin/python", "-m", "voxtream_experiments.provider_server"]
