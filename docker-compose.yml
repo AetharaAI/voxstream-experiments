@@ -1,0 +1,26 @@
+services:
+  voxtream-provider:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    runtime: nvidia
+    env_file: .env
+    environment:
+      VOXTREAM_MODEL_PATH: /models/voice/herimor/voxtream
+      VOXTREAM2_MODEL_PATH: /models/voice/herimor/voxtream2
+      NVIDIA_VISIBLE_DEVICES: ${VOXTREAM_PROVIDER_GPU_IDS:-0}
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
+    ports:
+      - "127.0.0.1:${VOXTREAM_PROVIDER_PORT:-8074}:${VOXTREAM_PROVIDER_PORT:-8074}"
+    volumes:
+      - ${HOST_MODEL_ROOT:-/mnt/aetherpro/models}:/models:ro
+      - ${HOST_HF_CACHE_ROOT:-/mnt/aetherpro/hf-cache}:${HF_HOME:-/hf-cache}
+    networks:
+      default:
+        aliases:
+          - voxtream-provider
+
+networks:
+  default:
+    external: true
+    name: ${VOXTREAM_PROVIDER_NETWORK_NAME:-aether-voice-mesh}
