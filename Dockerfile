@@ -1,4 +1,4 @@
-FROM nvidia/cuda:12.8.1-cudnn-runtime-ubuntu22.04
+FROM nvidia/cuda:12.8.1-cudnn-runtime-ubuntu24.04
 
 ARG VOXTREAM_PACKAGE_SPEC="voxtream>=0.2,<0.3"
 
@@ -8,10 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     UV_LINK_MODE=copy
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends software-properties-common curl git sox libsndfile1 espeak-ng \
-    && add-apt-repository ppa:deadsnakes/ppa \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends python3.12 python3.12-venv python3.12-dev \
+    && apt-get install -y --no-install-recommends curl git sox libsndfile1 espeak-ng python3.12 python3.12-venv python3.12-dev \
     && curl -LsSf https://astral.sh/uv/install.sh | sh \
     && ln -sf /root/.local/bin/uv /usr/local/bin/uv \
     && apt-get clean \
