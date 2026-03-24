@@ -5,10 +5,12 @@ ARG VOXTREAM_PACKAGE_SPEC="voxtream>=0.2,<0.3"
 ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    UV_LINK_MODE=copy
+    UV_LINK_MODE=copy \
+    CC=/usr/bin/gcc \
+    CXX=/usr/bin/g++
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl git sox libsndfile1 espeak-ng python3.12 python3.12-venv python3.12-dev \
+    && apt-get install -y --no-install-recommends build-essential curl git sox libsndfile1 espeak-ng python3.12 python3.12-venv python3.12-dev \
     && curl -LsSf https://astral.sh/uv/install.sh | sh \
     && ln -sf /root/.local/bin/uv /usr/local/bin/uv \
     && apt-get clean \
