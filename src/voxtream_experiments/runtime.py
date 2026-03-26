@@ -64,7 +64,7 @@ class ProviderRuntime:
 
     def _model_descriptor(self, model_alias: str) -> dict[str, str]:
         for descriptor in self.config.model_descriptors():
-            if descriptor["alias"] == model_alias:
+            if descriptor["alias"] == model_alias or descriptor["id"] == model_alias:
                 return descriptor
         raise HTTPException(status_code=400, detail=f"Unsupported model '{model_alias}'.")
 
