@@ -160,19 +160,23 @@ class ProviderRuntime:
         prompt_audio_path: str | None,
         prompt_audio_b64: str | None,
     ) -> tuple[str, str | None]:
+        # Prefer embedded bytes when available; they are portable across container
+        # boundaries and avoid stale/non-shared filesystem paths.
+        if prompt_audio_b64:
+            payload = prompt_audio_b64
+            if "," in prompt_audio_b64 and prompt_audio_b64.lower().startswith("data:audio/"):
+                payload = prompt_audio_b64.split(",", 1)[1]
+            raw = base64.b64decode(payload)
+            suffix = ".wav"
+            fd, temp_path = tempfile.mkstemp(prefix="voxtream_prompt_", suffix=suffix)
+            with os.fdopen(fd, "wb") as handle:
+                handle.write(raw)
+            return temp_path, temp_path
         if prompt_audio_path:
             return prompt_audio_path, None
         if not prompt_audio_b64:
             raise HTTPException(status_code=400, detail="Voxtream requires prompt_audio_path or prompt_audio_b64.")
-        payload = prompt_audio_b64
-        if "," in prompt_audio_b64 and prompt_audio_b64.lower().startswith("data:audio/"):
-            payload = prompt_audio_b64.split(",", 1)[1]
-        raw = base64.b64decode(payload)
-        suffix = ".wav"
-        fd, temp_path = tempfile.mkstemp(prefix="voxtream_prompt_", suffix=suffix)
-        with os.fdopen(fd, "wb") as handle:
-            handle.write(raw)
-        return temp_path, temp_path
+        raise HTTPException(status_code=400, detail="Voxtream requires prompt_audio_path or prompt_audio_b64.")
 
     def dependency_report(self) -> dict[str, Any]:
         models = []
